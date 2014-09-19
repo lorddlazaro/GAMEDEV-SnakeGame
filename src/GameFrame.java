@@ -125,6 +125,10 @@ public class GameFrame extends Game {
     		gameOver=true;
             //TODO: add restart screen
         }
+        
+        for(Block t: tail){
+        	
+        }
 
         if(!gameOver){
             readInput();
