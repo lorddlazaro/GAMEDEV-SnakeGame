@@ -43,7 +43,6 @@ public class GameFrame extends Game {
     }
 
     public void moveSnake(){
-        
         switch(snakeDirection){
             case 1 : snakeY-=.25;break;
             case 2 : snakeX+=.25;break;
@@ -62,8 +61,7 @@ public class GameFrame extends Game {
     }
     
     public void readInput(){
-        
-    if(keyPressed(KeyEvent.VK_UP )&& snakeDirection != 3){
+    	if(keyPressed(KeyEvent.VK_UP )&& snakeDirection != 3){
             snakeDirection = 1;
         }else if(keyPressed(KeyEvent.VK_RIGHT)&& snakeDirection != 4){
             snakeDirection = 2;
@@ -72,8 +70,8 @@ public class GameFrame extends Game {
         }else if(keyPressed(KeyEvent.VK_LEFT)&& snakeDirection != 2){
             snakeDirection = 4;
         }
-    
     }
+    
     public void resetFood(){
         int newX,newY;
         newX = (int)(Math.random()*100)%40;
@@ -81,7 +79,8 @@ public class GameFrame extends Game {
         food.setX((double)newX * dimension);
         food.setY((double)newY * dimension);
     }
-    public void showGameOver(){
+    
+    public void showGameOver(Graphics2D gd){
     	if(keyPressed(KeyEvent.VK_ENTER )){
     		gameOver=false;
     		snakeX=20;
@@ -90,12 +89,13 @@ public class GameFrame extends Game {
     		tail.removeAll(tail);
     	}
     }
+    
     public double getDistance(Block x, Block y){
     	double distance=0;    	
     	distance = Math.sqrt(Math.pow(x.getX()-y.getX(), 2)+Math.pow(x.getY()-y.getY(), 2));
     	return distance;
-    	
     }
+    
     public void follow(Block follower, Block target){
     	if(getDistance(follower,target)>16){
     		if(follower.getX()>target.getX()){
@@ -121,7 +121,6 @@ public class GameFrame extends Game {
         }
         // if outside bounds
         if(snake.getX() > 624 || snake.getY() > 624 || snake.getX() < 0 || snake.getY() <0){
-
     		gameOver=true;
             //TODO: add restart screen
         }
@@ -148,13 +147,24 @@ public class GameFrame extends Game {
             	follow(tail.get(i),tail.get(i-1));
             }
             
-        }else{
-        	showGameOver();
+            checkCollisionSnake();
+            
         }
+        
         snake.update(l);
         food.update(l);
     }
-    @Override
+    
+    private void checkCollisionSnake() {
+    	for(int i = 0; i< tail.size(); i++){
+    		if(snake.getX() == tail.get(i).getX() && snake.getY() == tail.get(i).getY()){
+    			gameOver = true;
+    		}
+    	}
+		
+	}
+
+	@Override
     public void render(Graphics2D gd) {
         gd.setColor(Color.gray);
         gd.fillRect(0, 0, getWidth(), getHeight());
@@ -163,7 +173,11 @@ public class GameFrame extends Game {
         for(int i=0;i <tail.size();i++){
             tail.get(i).render(gd);
         }
-       
+        
+        if(gameOver){
+        	fontManager.getFont("FPS Font").drawString(gd, "GAME OVER", 260, 260);
+        	showGameOver(gd);
+        }
     }
     
 }
