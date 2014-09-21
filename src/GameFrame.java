@@ -101,7 +101,7 @@ public class GameFrame extends Game {
     }
     
     public void follow(Block follower, Block target){
-    	if(getDistance(follower,target)>16){
+    	if(getDistance(follower,target)>18){
     		if(follower.getX()>target.getX()){
     			follower.setX(follower.getX()-(dimension*.25));
     		}else{
@@ -121,7 +121,19 @@ public class GameFrame extends Game {
         if(Math.abs(snake.getX() - food.getX()) < dimension && Math.abs(snake.getY() - food.getY()) < dimension){
             System.out.println("collide");
             resetFood();
-            tail.add(new Block(getImage("snakeblock.png"),0,0));
+            if(tail.size()==0){
+            	switch(snakeDirection){
+	                case 1 : tail.add(new Block(getImage("snakeblock.png"),snake.getX(),snake.getY()+16));break;
+	                case 2 : tail.add(new Block(getImage("snakeblock.png"),snake.getX()-16,snake.getY()));break;
+	                case 3 : tail.add(new Block(getImage("snakeblock.png"),snake.getX(),snake.getY()-16));break;
+	                case 4 : tail.add(new Block(getImage("snakeblock.png"),snake.getX()+16,snake.getY()));break;
+            	}
+            }else{
+            	Block lastTail = tail.get(tail.size()-1);
+            	tail.add(new Block(getImage("snakeblock.png"),lastTail.getX(),lastTail.getY()));
+            }
+            
+            	
         }
         // if outside bounds
         if(snake.getX() > 624 || snake.getY() > 624 || snake.getX() < 0 || snake.getY() <0){
@@ -163,7 +175,7 @@ public class GameFrame extends Game {
     }
     
     private void checkCollisionSnake() {
-    	for(int i = 0; i< tail.size(); i++){
+    	for(int i = 1; i< tail.size(); i++){
     		if(Math.abs(snake.getX() - tail.get(i).getX())<dimension && Math.abs(snake.getY() - tail.get(i).getY())<dimension){
     			gameOver = true;
     		}
