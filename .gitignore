@@ -1,6 +1,6 @@
 *.class
 bin
-
+.settings
 *.jar
 *.war
 *.ear
