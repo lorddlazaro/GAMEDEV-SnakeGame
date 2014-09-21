@@ -4,11 +4,13 @@
  */
 
 
-import com.golden.gamedev.Game;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+
+import com.golden.gamedev.Game;
+import com.golden.gamedev.object.Timer;
 
 /**
  *
@@ -35,6 +37,8 @@ public class GameFrame extends Game {
 //        for(int i=0; i<40;i++){
 //            border.add(new Block(getImage("food.png"),i * dimension,1 * dimension));
 //        }
+        
+        Timer snakespeed = new Timer(1000);
         
         System.out.println("Test---------------");
         
@@ -117,7 +121,7 @@ public class GameFrame extends Game {
         if(Math.abs(snake.getX() - food.getX()) < dimension && Math.abs(snake.getY() - food.getY()) < dimension){
             System.out.println("collide");
             resetFood();
-            tail.add(new Block(getImage("snakeblock.png"),snakeX * dimension,snakeY * dimension));
+            tail.add(new Block(getImage("snakeblock.png"),0,0));
         }
         // if outside bounds
         if(snake.getX() > 624 || snake.getY() > 624 || snake.getX() < 0 || snake.getY() <0){
@@ -160,7 +164,7 @@ public class GameFrame extends Game {
     
     private void checkCollisionSnake() {
     	for(int i = 0; i< tail.size(); i++){
-    		if(snake.getX() == tail.get(i).getX() && snake.getY() == tail.get(i).getY()){
+    		if(Math.abs(snake.getX() - tail.get(i).getX())<dimension && Math.abs(snake.getY() - tail.get(i).getY())<dimension){
     			gameOver = true;
     		}
     	}
