@@ -80,7 +80,7 @@ public class GameFrame extends Game {
         food.setY((double)newY * dimension);
     }
     
-    public void showGameOver(Graphics2D gd){
+    public void readInputRestartGame(){
     	if(keyPressed(KeyEvent.VK_ENTER )){
     		gameOver=false;
     		snakeX=20;
@@ -150,6 +150,9 @@ public class GameFrame extends Game {
             checkCollisionSnake();
             
         }
+        else{
+        	readInputRestartGame();
+        }
         
         snake.update(l);
         food.update(l);
@@ -176,7 +179,7 @@ public class GameFrame extends Game {
         
         if(gameOver){
         	fontManager.getFont("FPS Font").drawString(gd, "GAME OVER", 260, 260);
-        	showGameOver(gd);
+        	fontManager.getFont("FPS Font").drawString(gd, "PRESS ENTER TO RESTART", 260, 290);
         }
     }
     
