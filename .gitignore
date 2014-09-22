@@ -5,3 +5,4 @@ bin
 *.war
 *.ear
 .classpath
+.project
