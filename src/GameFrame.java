@@ -58,42 +58,37 @@ public class GameFrame extends Game {
 //        }
         //MAZE 2
         for(int i = 100; i<180; i+=16){
-        	maze2.add(new Block(getImage("assets/food.png"),i,100));
-        	maze2.add(new Block(getImage("assets/food.png"),i,400));
-        	maze2.add(new Block(getImage("assets/food.png"),i+300,100));
-        	maze2.add(new Block(getImage("assets/food.png"),i+300,400));
+        	maze2.add(new Block(getImage("assets/maze.png"),i,100));
+        	maze2.add(new Block(getImage("assets/maze.png"),i,400));
+        	maze2.add(new Block(getImage("assets/maze.png"),i+300,100));
+        	maze2.add(new Block(getImage("assets/maze.png"),i+300,400));
         }
         
         //MAZE 3
         for(int i = 100; i<180; i+=16){
-        	maze3.add(new Block(getImage("assets/food.png"),100,i));
-        	maze3.add(new Block(getImage("assets/food.png"),400,i));
-        	maze3.add(new Block(getImage("assets/food.png"),100,i+300));
-        	maze3.add(new Block(getImage("assets/food.png"),400,i+300));
+        	maze3.add(new Block(getImage("assets/maze.png"),100,i));
+        	maze3.add(new Block(getImage("assets/maze.png"),400,i));
+        	maze3.add(new Block(getImage("assets/maze.png"),100,i+300));
+        	maze3.add(new Block(getImage("assets/maze.png"),400,i+300));
         }
+        
         //MAZE 4
         for(int i = 50; i<500; i+=16){
-        	maze4.add(new Block(getImage("assets/food.png"),i,100));
-        	maze4.add(new Block(getImage("assets/food.png"),i,300));
-        	maze4.add(new Block(getImage("assets/food.png"),i,500));
+        	maze4.add(new Block(getImage("assets/maze.png"),i,100));
+        	maze4.add(new Block(getImage("assets/maze.png"),i,300));
+        	maze4.add(new Block(getImage("assets/maze.png"),i,500));
         }
         
         //MAZE 5
-      //MAZE 4
         for(int i = 50; i<500; i+=16){
-        	maze5.add(new Block(getImage("assets/food.png"),100,i));
-        	maze5.add(new Block(getImage("assets/food.png"),300,i));
-        	maze5.add(new Block(getImage("assets/food.png"),500,i));
+        	maze5.add(new Block(getImage("assets/maze.png"),100,i));
+        	maze5.add(new Block(getImage("assets/maze.png"),300,i));
+        	maze5.add(new Block(getImage("assets/maze.png"),500,i));
         }
         
         
         Timer snakespeed = new Timer(1000);
         powerupTimer = new Timer(10000);
-        
-        System.out.println("Test---------------");
-        
-        System.out.println(getDistance(new Block(getImage("assets/snakeblock.png"),0,0),new Block(getImage("assets/snakeblock.png"),6,8)));
-        System.out.println("End of Test--------");
     }
 
     public void moveSnake(){
@@ -141,6 +136,7 @@ public class GameFrame extends Game {
     		snakeY=20;
     		moveSnake();
     		tail.removeAll(tail);
+			powerupTimer = new Timer(10000);
     	}
     }
     
@@ -208,7 +204,9 @@ public class GameFrame extends Game {
     		int newX,newY;
             newX = (int)(Math.random()*100)%40;
             newY = (int)(Math.random()*100)%40;
-    		powerup = new Block(getImage("assets/snakeblock.png"),(double)newX * dimension,(double)newY * dimension);
+            if(powerupType == 1){
+            	powerup = new Block(getImage("assets/magnet.png"),(double)newX * dimension,(double)newY * dimension);
+            }
     		powerupType = (int)(1+((Math.random()*100)%1));
     		
     	}
@@ -232,6 +230,7 @@ public class GameFrame extends Game {
         // if outside bounds
         if(snake.getX() > 624 || snake.getY() > 624 || snake.getX() < 0 || snake.getY() <0){
     		gameOver=true;
+    		powerUpActive = 0;
             //TODO: add restart screen
         }
         
@@ -269,10 +268,6 @@ public class GameFrame extends Game {
                 	powerUpActive=0;
                 }
             }
-            
-            
-            
-            
         }
         else{
         	readInputRestartGame();
@@ -314,24 +309,26 @@ public class GameFrame extends Game {
     public void render(Graphics2D gd) {
 		System.out.println(mainScreen);
 		if(mainScreen){
-			gd.setColor(Color.gray);
+			gd.setColor(Color.white);
 	        gd.fillRect(0, 0, getWidth(), getHeight());
-	        fontManager.getFont("FPS Font").drawString(gd, "SNAKE BY TIM AND LORDD", 260, 260);
-	        fontManager.getFont("FPS Font").drawString(gd, "PRESS ENTER TO START", 260, 290);
+	        fontManager.getFont("FPS Font").drawString(gd, "SNAKE BY TIM AND LORDD", 195, 220);
+	        fontManager.getFont("FPS Font").drawString(gd, "PRESS ENTER TO START", 200, 240);
 	        
 		}else if(levelChosen==false){
-			gd.setColor(Color.gray);
+			gd.setColor(Color.white);
 	        gd.fillRect(0, 0, getWidth(), getHeight());
-        	fontManager.getFont("FPS Font").drawString(gd, "CHOOSE LEVEL PRESS LEFT OR RIGHT", 200, 260);
-        	fontManager.getFont("FPS Font").drawString(gd, "CHOOSE SPEED PRESS UP OR DOWN", 200, 320);
-        	fontManager.getFont("FPS Font").drawString(gd, "PRESS ENTER TO PLAY", 200, 230);
+
+        	fontManager.getFont("FPS Font").drawString(gd, "LEVEL SELECTION", 140, 160);
+        	fontManager.getFont("FPS Font").drawString(gd, "CHOOSE LEVEL PRESS LEFT OR RIGHT", 140, 200);
+        	fontManager.getFont("FPS Font").drawString(gd, "CHOOSE SPEED PRESS UP OR DOWN", 140, 260);
         	
-        	fontManager.getFont("FPS Font").drawString(gd, "LEVEL "+level, 200, 290);
-        	fontManager.getFont("FPS Font").drawString(gd, "SPEED "+speed, 200, 350);
+        	fontManager.getFont("FPS Font").drawString(gd, "LEVEL "+level, 150, 230);
+        	fontManager.getFont("FPS Font").drawString(gd, "SPEED "+speed, 150, 290);
+        	fontManager.getFont("FPS Font").drawString(gd, "PRESS ENTER TO PLAY", 140, 330);
         	
         }
 		else if(mainScreen==false){
-			gd.setColor(Color.gray);
+			gd.setColor(Color.white);
 	        gd.fillRect(0, 0, getWidth(), getHeight());
 	        snake.render(gd);
 	        food.render(gd);
@@ -342,13 +339,13 @@ public class GameFrame extends Game {
 	        	currentMaze.get(i).render(gd);
 	        }
 	        if(powerup!=null){
-
 		        powerup.render(gd);
 	        }
 	        
 	        if(gameOver){
 	        	fontManager.getFont("FPS Font").drawString(gd, "GAME OVER", 260, 260);
 	        	fontManager.getFont("FPS Font").drawString(gd, "PRESS ENTER TO RESTART", 260, 290);
+    			powerUpActive=0;
 	        }
 		}
         
