@@ -176,8 +176,8 @@ public class GameFrame extends Game {
     	if(keyPressed(KeyEvent.VK_ENTER )){
     		gameOver=false;
     		timeRemaining.refresh();
-    		snakeX = 0;
-            snakeY= 0;
+    		snakeX = 10;
+            snakeY= 10;
     		moveSnake();
     		tail.removeAll(tail);
 			powerupTimer = new Timer(10000);
@@ -318,10 +318,10 @@ public class GameFrame extends Game {
             switch(powerupType){
             	case 1 : powerup = new Block(getImage("assets/magnet.png"),(double)newX * dimension,(double)newY * dimension);
             			break;
-            	case 2 : powerup = new Block(getImage("assets/magnet.png"),(double)newX * dimension,(double)newY * dimension);
-    			break;
+            	case 2 : powerup = new Block(getImage("assets/2x.png"),(double)newX * dimension,(double)newY * dimension);
+    					break;
             	case 3 : powerup = new Block(getImage("assets/magnet.png"),(double)newX * dimension,(double)newY * dimension);
-    			break;
+    					break;
             }
     		powerupType = (int)(1+((Math.random()*100)%2));
     		
@@ -485,8 +485,9 @@ public class GameFrame extends Game {
 	        
 	        //SHOW TIMER
 	        long time = (60-(timeRemaining.getCurrentTick()/1000));
-	        fontManager.getFont("FPS Font").drawString(gd, "TIME:"+time, 0, 0);
-	        fontManager.getFont("FPS Font").drawString(gd, "SCORE:"+score, 0, 30);
+	        fontManager.getFont("FPS Font").drawString(gd, "TIME:"+time, 5, 10);
+	        fontManager.getFont("FPS Font").drawString(gd, "SCORE:"+score, 5, 30);
+	        fontManager.getFont("FPS Font").drawString(gd, "LEVEL: "+level, 250, 10);
 	        
 	        if(time == 0 && level<=5){
 	        	level++;
@@ -508,8 +509,8 @@ public class GameFrame extends Game {
 	private void resetVariables() {
 		newLevel = true;
 		timeRemaining.refresh();
-		snakeX = 0;
-        snakeY= 0;
+		snakeX = 10;
+        snakeY= 10;
 		moveSnake();
 		tail.removeAll(tail);
 		powerupTimer = new Timer(10000);
