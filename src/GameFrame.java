@@ -152,18 +152,16 @@ public class GameFrame extends Game {
     public void follow(Block follower, Block target){
     	if(getDistance(follower,target)>16){
     		if(follower.getX()>target.getX()){
-    			follower.setX(follower.getX()-dimension*speed);
+    			follower.setX(follower.getX()-dimension*(speed+1));
     		}else{
-    			follower.setX(follower.getX()+dimension*speed);
+    			follower.setX(follower.getX()+dimension*(speed+1));
     		}
     		if(follower.getY()>target.getY()){
-    			follower.setY(follower.getY()-dimension*speed);
+    			follower.setY(follower.getY()-dimension*(speed+1));
     		}else{
-    			follower.setY(follower.getY()+dimension*speed);
+    			follower.setY(follower.getY()+dimension*(speed+1));
     		}
     	}
-    	System.out.println("SNAKE: "+target.getX()+dimension+"," + follower.getY()+dimension);
-    	System.out.println("FOOD: " +follower.getX()+dimension+", " +follower.getY()+dimension);
     }
     
     public void mainScreen(){
@@ -344,7 +342,7 @@ public class GameFrame extends Game {
 			if(Math.abs(snake.getX() - powerup.getX())<dimension && Math.abs(snake.getY() - powerup.getY())<dimension){
 				powerUpActive=1;
 				powerup=null;
-				powerupDuration = new Timer(5000);
+				powerupDuration = new Timer(3000);
 			System.out.println("collide with powerup");
 			}
     	}
