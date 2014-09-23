@@ -231,7 +231,7 @@ public class GameFrame extends Game {
         		if(gotFood>0){
         			System.out.println("snake:"+snake.getX()+","+snake.getY());
         			System.out.println("lastFood:"+lastFood.getX()+","+lastFood.getY());
-        			tail.add(new Block(getImage("assets/maze.png"),lastFood.getX(),lastFood.getY()));
+        			tail.add(new Block(getImage("assets/snaketail.png"),lastFood.getX(),lastFood.getY()));
         			gotFood--;
         		}else{
 //        			if(tail.size()>0){
