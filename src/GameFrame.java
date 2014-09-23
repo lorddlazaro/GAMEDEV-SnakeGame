@@ -42,6 +42,7 @@ public class GameFrame extends Game {
     Timer snakespeed;
     int gotFood=0;
     Block lastFood;
+    Timer timeRemaining;
     
     
     final double dimension = 16; //16 x 16
@@ -92,6 +93,7 @@ public class GameFrame extends Game {
         
         snakespeed = new Timer(50);
         powerupTimer = new Timer(10000);
+        timeRemaining = new Timer(60000);
     }
 
     public void moveSnake(){
@@ -135,6 +137,7 @@ public class GameFrame extends Game {
     public void readInputRestartGame(){
     	if(keyPressed(KeyEvent.VK_ENTER )){
     		gameOver=false;
+    		timeRemaining.refresh();
     		snakeX=20;
     		snakeY=20;
     		moveSnake();
@@ -196,6 +199,10 @@ public class GameFrame extends Game {
     
     public void game(long l){
     	//System.out.println(level);
+    	
+    	if(timeRemaining.action(l)){
+    		gameOver=true;
+    	}
     	switch(level){
     		case 1 : currentMaze = maze1;break;
     		case 2 : currentMaze = maze2;break;
@@ -224,19 +231,13 @@ public class GameFrame extends Game {
         
         if(!gameOver){
         	readInput();
-            
         	if(snakespeed.action(l)){
-        		
-        		
         		if(gotFood>0){
         			System.out.println("snake:"+snake.getX()+","+snake.getY());
         			System.out.println("lastFood:"+lastFood.getX()+","+lastFood.getY());
         			tail.add(new Block(getImage("assets/maze.png"),lastFood.getX(),lastFood.getY()));
         			gotFood--;
         		}else{
-//        			if(tail.size()>0){
-//                    	tail.get(0).setLocation(snake.getX(), snake.getY());
-//                    }
                     for(int i=0;i < tail.size();i++){
                     	if(i==tail.size()-1){
                     		tail.get(i).setLocation(snake.getX(),snake.getY());
@@ -251,57 +252,15 @@ public class GameFrame extends Game {
         		if(Math.abs(snake.getX() - food.getX()) < dimension && Math.abs(snake.getY() - food.getY()) < dimension){
                     System.out.println("collide");
                     System.out.println("food:"+food.getX()+","+food.getY());
-                    //tail.add(new Block(getImage("assets/snakeblock.png"),food.getX(),food.getY()));
                     lastFood=food;
                     System.out.println("lastFood:"+lastFood.getX()+","+lastFood.getY());
-                    //resetFood();
                     int newX,newY;
                     newX = (int)(Math.random()*100)%40;
                     newY = (int)(Math.random()*100)%40;
                     food = new Block(getImage("assets/food.png"),newX * dimension,newY * dimension);
                     gotFood+=1;
                     
-//                    if(tail.size()==0){
-//                    	switch(snakeDirection){
-//        	                case 1 : tail.add(new Block(getImage("assets/snakeblock.png"),snake.getX(),snake.getY()+16));break;
-//        	                case 2 : tail.add(new Block(getImage("assets/snakeblock.png"),snake.getX()-16,snake.getY()));break;
-//        	                case 3 : tail.add(new Block(getImage("assets/snakeblock.png"),snake.getX(),snake.getY()-16));break;
-//        	                case 4 : tail.add(new Block(getImage("assets/snakeblock.png"),snake.getX()+16,snake.getY()));break;
-//                    	}
-//                    }else{
-//                    	Block lastTail = tail.get(tail.size()-1);
-//                    	tail.add(new Block(getImage("assets/snakeblock.png"),lastTail.getX(),lastTail.getY()));
-//                    }
-                    
                 }
-                
-                
-                
-//                if(gotFood){
-//        			tail.add(new Block(getImage("assets/snakeblock.png"),food.getX(),food.getY()));
-//        			gotFood=false;
-//        		}
-//                if(tail.size()>0){
-//                	tail.get(0).setX(snake.getX());
-//                	tail.get(0).setY(snake.getY());
-//                }
-//                for(int i=1;i < tail.size();i++){
-//                	tail.get(i).setX(tail.get(i-1).getX());
-//                	tail.get(i).setY(tail.get(i-1).getY());
-//                }
-//                if(tail.size()>0){
-//                	follow(tail.get(0),snake);
-//                }
-//                for(int i=1;i < tail.size();i++){
-//                	follow(tail.get(i),tail.get(i-1));
-//                }
-//                if(tail.size()>0){
-//                	tail.get(0).setLocation(snake.getX(), snake.getY());
-//                }
-//                for(int i=1;i < tail.size();i++){
-//                	follow(tail.get(i),tail.get(i-1));
-//                	tail.get(i).setLocation(tail.get(i-1).getX(), tail.get(i-1).getY());
-//                }
                 
                 checkCollisionSnake();
                 checkCollisionMaze();
@@ -392,6 +351,11 @@ public class GameFrame extends Game {
 	        if(powerup!=null){
 		        powerup.render(gd);
 	        }
+	        
+	        //SHOW TIMER
+	        long time = (60-(timeRemaining.getCurrentTick()/1000));
+	        fontManager.getFont("FPS Font").drawString(gd, "TIME:"+time, 0, 0);
+	        
 	        
 	        if(gameOver){
 	        	fontManager.getFont("FPS Font").drawString(gd, "GAME OVER", 260, 260);
