@@ -23,12 +23,9 @@ public class SnakeGame {
         // TODO code application logic here
         GameFrame gf = new GameFrame();
         GameLoader game = new GameLoader();
-        try {
-			gf.readHighscore();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        
+        gf.readHighscore();
+		
         game.setup(gf,new Dimension(640,640), false);
         game.start();
         

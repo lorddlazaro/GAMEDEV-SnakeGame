@@ -7,8 +7,15 @@
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -38,6 +45,8 @@ public class GameFrame extends Game {
     ArrayList<Block> maze3 = new ArrayList<Block>();
     ArrayList<Block> maze4 = new ArrayList<Block>();
     ArrayList<Block> maze5 = new ArrayList<Block>();
+
+	ArrayList<Scorer> scorerList = new ArrayList<Scorer>();
     int SPEED_LEVEL = 0;
     int MAZE_LEVEL = 1;
     Timer powerupTimer;
@@ -49,9 +58,11 @@ public class GameFrame extends Game {
     Timer timeRemaining;
     int score;
     boolean startGame = false;
+    boolean savedScore = false;
     final double dimension = 16; //16 x 16
     @Override
     public void initResources() {
+    	
     	score=0;
     	mainScreen=true;
         snakeX = 0;
@@ -130,6 +141,8 @@ public class GameFrame extends Game {
             snakeDirection = 4;
         } else if(keyPressed(KeyEvent.VK_ENTER) && level == 6){
 	    	mainScreen = true;
+			savedScore = false;
+			saveScores();
         }
     }
     
@@ -152,26 +165,70 @@ public class GameFrame extends Game {
 			powerupTimer = new Timer(10000);
 			score=0;
 			newLevel = false;
+			savedScore = false;
+			saveScores();
     	}
     }
     
-    public void readHighscore() throws FileNotFoundException{
-    	
-    	ArrayList<Scorer> scorerList = new ArrayList<Scorer>();
-    	Scanner scanner = new Scanner(new File("src/score.txt"));
-    	scanner.useDelimiter("=");
-    	if (scanner.hasNext()){
-    	      //assumes the line has a certain structure
-    	      String name = scanner.next();
-    	      String value = scanner.next();
-    	}
-    	    else {
-    	      log("Empty or invalid line. Unable to process.");
-    	}
-    
+    public void readHighscore(){
+    	readFileText();    
     }
     
-    public double getDistance(Block x, Block y){
+    private void readFileText() {
+    	Scorer scorer = new Scorer();
+        String fileName="src/score.txt";
+        try{
+	        FileReader inputFile = new FileReader(fileName);
+	        BufferedReader bufferReader = new BufferedReader(inputFile);
+	
+	        String line;
+	        String temp = "";
+	        while ((line = bufferReader.readLine()) != null){
+	        	temp = "";
+	        	scorer = new Scorer();
+	        	for(int i = 0; i<line.length(); i++){
+	        		if (i==line.length()-1){
+	        			temp+=line.charAt(line.length()-1);
+	        			scorer.setScore(Integer.parseInt(temp));
+	        		} else if(line.charAt(i) != ' '){
+	        			temp+=line.charAt(i);
+	        		} else if(line.charAt(i) == ' '){
+	        			scorer.setName(temp);
+	        			temp = "";
+	        		} 
+	        	}
+        		scorerList.add(scorer);
+
+	        }
+	        
+	        bufferReader.close();
+        }catch(Exception e){
+               e.printStackTrace();                   
+        }	
+	}
+    
+    // Appends the result. It should overwrite the existing file.
+    private void saveScores(){
+    	readHighscore();
+    	scorerList.add(new Scorer("HEY", 50));
+    	try {
+    		if(savedScore == false){
+    			FileWriter writer = new FileWriter(new File("src/score.txt"), false);
+                for(int i = 0; i<scorerList.size(); i++){
+                	System.out.println("INSIDE LOOP: "+scorerList.get(i).getName() + " " + scorerList.get(i).getScore());
+                    
+                	writer.write(scorerList.get(i).getName() + " " + scorerList.get(i).getScore());
+                	writer.write('\n');
+                }
+    	    	savedScore = true;
+        		writer.close();
+    		}
+        } catch (Exception e) {
+        	System.out.println("There was a problem:" + e);
+    	}
+    }
+
+	public double getDistance(Block x, Block y){
     	double distance=0;    	
     	distance = Math.sqrt(Math.pow(x.getX()-y.getX(), 2)+Math.pow(x.getY()-y.getY(), 2));
     	return distance;
@@ -410,7 +467,6 @@ public class GameFrame extends Game {
 	        if(newLevel){
 	        	showNewLevel(gd);
 	        	readInputRestartGame();
-	        	System.out.println(level);
 	        } else if(gameOver){
 	        	fontManager.getFont("FPS Font").drawString(gd, "GAME OVER", 260, 260);
 	        	fontManager.getFont("FPS Font").drawString(gd, "PRESS ENTER TO RESTART", 260, 290);
@@ -444,10 +500,6 @@ public class GameFrame extends Game {
 	    	fontManager.getFont("FPS Font").drawString(gd, "LEVEL FINISHED", 140, 160);
 	    	fontManager.getFont("FPS Font").drawString(gd, "PRESS ENTER TO CONTINUE", 140, 200);
         }
-	}
-
-	public void log(Object object){
-		System.out.println(object);
 	}
     
 }

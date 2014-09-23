@@ -6,6 +6,10 @@ public class Scorer {
 		setName("");
 		setScore(0);
 	}
+	public Scorer(String name, int score){
+		setName(name);
+		setScore(score);
+	}
 	public String getName() {
 		return name;
 	}
