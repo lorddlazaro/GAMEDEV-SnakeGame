@@ -7,7 +7,11 @@
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Scanner;
 
 import com.golden.gamedev.Game;
 import com.golden.gamedev.object.Timer;
@@ -146,6 +150,27 @@ public class GameFrame extends Game {
 			powerupTimer = new Timer(10000);
 			score=0;
     	}
+    }
+    
+    public void readHighscore() throws FileNotFoundException{
+    	
+    	HashMap<Integer,Integer> highscore = new HashMap<Integer,Integer>();
+    	Scanner scanner = new Scanner(new File("src/score.txt"));
+    	scanner.useDelimiter("=");
+    	if (scanner.hasNext()){
+    	      //assumes the line has a certain structure
+    	      Integer name = Integer.parseInt(scanner.next());
+    	      Integer value = Integer.parseInt(scanner.next());
+    	      highscore.put(name, value);
+    	}
+    	    else {
+    	      log("Empty or invalid line. Unable to process.");
+    	}
+    	
+    	for(int i=1;i<highscore.size();i++){
+    		log(highscore.get(i));
+    	}
+    
     }
     
     public double getDistance(Block x, Block y){
@@ -384,5 +409,9 @@ public class GameFrame extends Game {
 		}
         
     }
+	
+	public void log(Object object){
+		System.out.println(object);
+	}
     
 }
