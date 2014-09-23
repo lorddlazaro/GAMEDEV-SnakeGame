@@ -10,7 +10,6 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Scanner;
 
 import com.golden.gamedev.Game;
@@ -46,8 +45,8 @@ public class GameFrame extends Game {
     Timer snakespeed;
     int gotFood=0;
     Block lastFood;
+    Boolean newLevel = false;
     Timer timeRemaining;
-    Timer timeMusic;
     int score;
     int scoreMultiplier=1;
     boolean startGame = false;
@@ -130,6 +129,8 @@ public class GameFrame extends Game {
             snakeDirection = 3;
         }else if(keyPressed(KeyEvent.VK_LEFT)&& snakeDirection != 2){
             snakeDirection = 4;
+        } else if(keyPressed(KeyEvent.VK_ENTER) && level == 6){
+	    	mainScreen = true;
         }
     	
 
@@ -162,32 +163,28 @@ public class GameFrame extends Game {
     	if(keyPressed(KeyEvent.VK_ENTER )){
     		gameOver=false;
     		timeRemaining.refresh();
-    		snakeX=20;
-    		snakeY=20;
+    		snakeX = 0;
+            snakeY= 0;
     		moveSnake();
     		tail.removeAll(tail);
 			powerupTimer = new Timer(10000);
 			score=0;
+			newLevel = false;
     	}
     }
     
     public void readHighscore() throws FileNotFoundException{
     	
-    	HashMap<Integer,Integer> highscore = new HashMap<Integer,Integer>();
+    	ArrayList<Scorer> scorerList = new ArrayList<Scorer>();
     	Scanner scanner = new Scanner(new File("src/score.txt"));
     	scanner.useDelimiter("=");
     	if (scanner.hasNext()){
     	      //assumes the line has a certain structure
-    	      Integer name = Integer.parseInt(scanner.next());
-    	      Integer value = Integer.parseInt(scanner.next());
-    	      highscore.put(name, value);
+    	      String name = scanner.next();
+    	      String value = scanner.next();
     	}
     	    else {
     	      log("Empty or invalid line. Unable to process.");
-    	}
-    	
-    	for(int i=1;i<highscore.size();i++){
-    		log(highscore.get(i));
     	}
     
     }
@@ -250,13 +247,6 @@ public class GameFrame extends Game {
     	if(timeRemaining.action(l)){
     		gameOver=true;
     	}
-    	//TODO:implement sound replay
-//    	if(levelChosen ){
-//    		if(timeMusic.action(l)){
-//
-//        		startGame = true;
-//    		}
-//    	}
     	switch(level){
     		case 1 : currentMaze = maze1;break;
     		case 2 : currentMaze = maze2;break;
@@ -291,7 +281,6 @@ public class GameFrame extends Game {
         if(!gameOver){
         	if(startGame){
         		playSound("assets/background.wav");
-        		timeMusic = new Timer(10000);
         		startGame = false;
         	}
         	if(powerUpActive==1){
@@ -310,9 +299,10 @@ public class GameFrame extends Game {
         	readInput();
         	if(snakespeed.action(l)){
         		if(gotFood>0){
-        			//System.out.println("snake:"+snake.getX()+","+snake.getY());
-        			//System.out.println("lastFood:"+lastFood.getX()+","+lastFood.getY());
-        			tail.add(new Block(getImage("assets/maze.png"),lastFood.getX(),lastFood.getY()));
+
+        			System.out.println("snake:"+snake.getX()+","+snake.getY());
+        			System.out.println("lastFood:"+lastFood.getX()+","+lastFood.getY());
+        			tail.add(new Block(getImage("assets/snaketail.png"),lastFood.getX(),lastFood.getY()));
         			gotFood--;
         		}else{
                     for(int i=0;i < tail.size();i++){
@@ -441,8 +431,16 @@ public class GameFrame extends Game {
 	        fontManager.getFont("FPS Font").drawString(gd, "TIME:"+time, 0, 0);
 	        fontManager.getFont("FPS Font").drawString(gd, "SCORE:"+score, 0, 30);
 	        
+	        if(time == 0 && level<=5){
+	        	level++;
+	        	resetVariables();
+	        } 
 	        
-	        if(gameOver){
+	        if(newLevel){
+	        	showNewLevel(gd);
+	        	readInputRestartGame();
+	        	System.out.println(level);
+	        } else if(gameOver){
 	        	fontManager.getFont("FPS Font").drawString(gd, "GAME OVER", 260, 260);
 	        	fontManager.getFont("FPS Font").drawString(gd, "PRESS ENTER TO RESTART", 260, 290);
     			powerUpActive=0;
@@ -451,6 +449,32 @@ public class GameFrame extends Game {
         
     }
 	
+	private void resetVariables() {
+		newLevel = true;
+		timeRemaining.refresh();
+		snakeX = 0;
+        snakeY= 0;
+		moveSnake();
+		tail.removeAll(tail);
+		powerupTimer = new Timer(10000);
+		score=0;
+	}
+
+	private void showNewLevel(Graphics2D gd) {
+		gd.setColor(Color.white);
+        gd.fillRect(0, 0, getWidth(), getHeight());
+
+        if(level==6){
+        	fontManager.getFont("FPS Font").drawString(gd, "CONGRATULATIONS!", 140, 160);
+	    	fontManager.getFont("FPS Font").drawString(gd, "YOU FINISHED THE GAME!", 140, 200);
+	    	fontManager.getFont("FPS Font").drawString(gd, "PRESS ENTER TO CONTINUE", 140, 220);
+	    	readInput();
+        } else{
+	    	fontManager.getFont("FPS Font").drawString(gd, "LEVEL FINISHED", 140, 160);
+	    	fontManager.getFont("FPS Font").drawString(gd, "PRESS ENTER TO CONTINUE", 140, 200);
+        }
+	}
+
 	public void log(Object object){
 		System.out.println(object);
 	}
