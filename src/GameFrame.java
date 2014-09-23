@@ -43,11 +43,12 @@ public class GameFrame extends Game {
     int gotFood=0;
     Block lastFood;
     Timer timeRemaining;
-    
+    int score;
     
     final double dimension = 16; //16 x 16
     @Override
     public void initResources() {
+    	score=0;
     	mainScreen=true;
         snakeX = 0;
         snakeY= 0;
@@ -143,6 +144,7 @@ public class GameFrame extends Game {
     		moveSnake();
     		tail.removeAll(tail);
 			powerupTimer = new Timer(10000);
+			score=0;
     	}
     }
     
@@ -235,7 +237,7 @@ public class GameFrame extends Game {
         		if(gotFood>0){
         			System.out.println("snake:"+snake.getX()+","+snake.getY());
         			System.out.println("lastFood:"+lastFood.getX()+","+lastFood.getY());
-        			tail.add(new Block(getImage("assets/snaketail.png"),lastFood.getX(),lastFood.getY()));
+        			tail.add(new Block(getImage("assets/maze.png"),lastFood.getX(),lastFood.getY()));
         			gotFood--;
         		}else{
                     for(int i=0;i < tail.size();i++){
@@ -259,7 +261,7 @@ public class GameFrame extends Game {
                     newY = (int)(Math.random()*100)%40;
                     food = new Block(getImage("assets/food.png"),newX * dimension,newY * dimension);
                     gotFood+=1;
-                    
+                    score+=1;
                 }
                 
                 checkCollisionSnake();
@@ -355,6 +357,7 @@ public class GameFrame extends Game {
 	        //SHOW TIMER
 	        long time = (60-(timeRemaining.getCurrentTick()/1000));
 	        fontManager.getFont("FPS Font").drawString(gd, "TIME:"+time, 0, 0);
+	        fontManager.getFont("FPS Font").drawString(gd, "SCORE:"+score, 0, 30);
 	        
 	        
 	        if(gameOver){
