@@ -152,16 +152,18 @@ public class GameFrame extends Game {
     public void follow(Block follower, Block target){
     	if(getDistance(follower,target)>16){
     		if(follower.getX()>target.getX()){
-    			follower.setX(follower.getX()-(dimension*.25)*speed);
+    			follower.setX(follower.getX()-dimension*speed);
     		}else{
-    			follower.setX(follower.getX()+(dimension*.25)*speed);
+    			follower.setX(follower.getX()+dimension*speed);
     		}
     		if(follower.getY()>target.getY()){
-    			follower.setY(follower.getY()-(dimension*.25)*speed);
+    			follower.setY(follower.getY()-dimension*speed);
     		}else{
-    			follower.setY(follower.getY()+(dimension*.25)*speed);
+    			follower.setY(follower.getY()+dimension*speed);
     		}
     	}
+    	System.out.println("SNAKE: "+target.getX()+dimension+"," + follower.getY()+dimension);
+    	System.out.println("FOOD: " +follower.getX()+dimension+", " +follower.getY()+dimension);
     }
     
     public void mainScreen(){
@@ -255,9 +257,21 @@ public class GameFrame extends Game {
                     lastFood=food;
                     System.out.println("lastFood:"+lastFood.getX()+","+lastFood.getY());
                     //resetFood();
+                    boolean sameCoordinates = false;
                     int newX,newY;
-                    newX = (int)(Math.random()*100)%40;
-                    newY = (int)(Math.random()*100)%40;
+                    do{
+	                    newX = (int)(Math.random()*100)%40;
+	                    newY = (int)(Math.random()*100)%40;
+	                    
+	                    for(int i = 0; i<currentMaze.size();i++){
+	                    	if(newX == currentMaze.get(i).getX() && newY == currentMaze.get(i).getY()){
+	                    		sameCoordinates = true;
+	                    		break;
+	                    	} else {
+	                    		sameCoordinates = false;
+	                    	}
+	                    }
+                    } while(sameCoordinates == true);
                     food = new Block(getImage("assets/food.png"),newX * dimension,newY * dimension);
                     gotFood+=1;
                     
