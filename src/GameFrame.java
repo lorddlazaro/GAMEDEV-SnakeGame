@@ -47,8 +47,9 @@ public class GameFrame extends Game {
     int gotFood=0;
     Block lastFood;
     Timer timeRemaining;
+    Timer timeMusic;
     int score;
-    
+    boolean startGame = false;
     final double dimension = 16; //16 x 16
     @Override
     public void initResources() {
@@ -182,18 +183,16 @@ public class GameFrame extends Game {
     public void follow(Block follower, Block target){
     	if(getDistance(follower,target)>16){
     		if(follower.getX()>target.getX()){
-    			follower.setX(follower.getX()-dimension*speed);
+    			follower.setX(follower.getX()-dimension*(speed+1));
     		}else{
-    			follower.setX(follower.getX()+dimension*speed);
+    			follower.setX(follower.getX()+dimension*(speed+1));
     		}
     		if(follower.getY()>target.getY()){
-    			follower.setY(follower.getY()-dimension*speed);
+    			follower.setY(follower.getY()-dimension*(speed+1));
     		}else{
-    			follower.setY(follower.getY()+dimension*speed);
+    			follower.setY(follower.getY()+dimension*(speed+1));
     		}
     	}
-    	System.out.println("SNAKE: "+target.getX()+dimension+"," + follower.getY()+dimension);
-    	System.out.println("FOOD: " +follower.getX()+dimension+", " +follower.getY()+dimension);
     }
     
     public void mainScreen(){
@@ -201,6 +200,7 @@ public class GameFrame extends Game {
             mainScreen=false;
     	}else if(mainScreen==false && keyPressed(KeyEvent.VK_ENTER )){
             levelChosen=true;
+            startGame = true;
     	}
     	if(keyPressed(KeyEvent.VK_UP)&&speed<3){
     		speed++;
@@ -232,6 +232,9 @@ public class GameFrame extends Game {
     	if(timeRemaining.action(l)){
     		gameOver=true;
     	}
+    	if(timeMusic.action(l)){
+    		startGame = true;
+    	}
     	switch(level){
     		case 1 : currentMaze = maze1;break;
     		case 2 : currentMaze = maze2;break;
@@ -259,6 +262,11 @@ public class GameFrame extends Game {
         }
         
         if(!gameOver){
+        	if(startGame){
+        		playSound("assets/background.wav");
+        		timeMusic = new Timer(10000);
+        		startGame = false;
+        	}
         	readInput();
         	if(snakespeed.action(l)){
         		if(gotFood>0){
@@ -332,7 +340,7 @@ public class GameFrame extends Game {
 			if(Math.abs(snake.getX() - powerup.getX())<dimension && Math.abs(snake.getY() - powerup.getY())<dimension){
 				powerUpActive=1;
 				powerup=null;
-				powerupDuration = new Timer(5000);
+				powerupDuration = new Timer(3000);
 			System.out.println("collide with powerup");
 			}
     	}
