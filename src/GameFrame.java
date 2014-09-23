@@ -39,6 +39,9 @@ public class GameFrame extends Game {
     int MAZE_LEVEL = 1;
     Timer powerupTimer;
     Timer powerupDuration;
+    Timer snakespeed;
+    int gotFood=0;
+    Block lastFood;
     
     
     final double dimension = 16; //16 x 16
@@ -87,16 +90,16 @@ public class GameFrame extends Game {
         }
         
         
-        Timer snakespeed = new Timer(1000);
+        snakespeed = new Timer(50);
         powerupTimer = new Timer(10000);
     }
 
     public void moveSnake(){
         switch(snakeDirection){
-            case 1 : snakeY-=.25*speed;break;
-            case 2 : snakeX+=.25*speed;break;
-            case 3 : snakeY+=.25*speed;break;
-            case 4 : snakeX-=.25*speed;break;
+            case 1 : snakeY-= 1*speed;break;
+            case 2 : snakeX+= 1*speed;break;
+            case 3 : snakeY+= 1*speed;break;
+            case 4 : snakeX-= 1*speed;break;
         }
 //        switch(snakeDirection){
 //            case 1 : snakeY-=16;break;
@@ -192,7 +195,7 @@ public class GameFrame extends Game {
     }
     
     public void game(long l){
-    	System.out.println(level);
+    	//System.out.println(level);
     	switch(level){
     		case 1 : currentMaze = maze1;break;
     		case 2 : currentMaze = maze2;break;
@@ -210,23 +213,8 @@ public class GameFrame extends Game {
     		powerupType = (int)(1+((Math.random()*100)%1));
     		
     	}
-    	if(Math.abs(snake.getX() - food.getX()) < dimension && Math.abs(snake.getY() - food.getY()) < dimension){
-            System.out.println("collide");
-            resetFood();
-            if(tail.size()==0){
-            	switch(snakeDirection){
-	                case 1 : tail.add(new Block(getImage("assets/snakeblock.png"),snake.getX(),snake.getY()+16));break;
-	                case 2 : tail.add(new Block(getImage("assets/snakeblock.png"),snake.getX()-16,snake.getY()));break;
-	                case 3 : tail.add(new Block(getImage("assets/snakeblock.png"),snake.getX(),snake.getY()-16));break;
-	                case 4 : tail.add(new Block(getImage("assets/snakeblock.png"),snake.getX()+16,snake.getY()));break;
-            	}
-            }else{
-            	Block lastTail = tail.get(tail.size()-1);
-            	tail.add(new Block(getImage("assets/snakeblock.png"),lastTail.getX(),lastTail.getY()));
-            }
-            
-            	
-        }
+    	//if collide food
+    	
         // if outside bounds
         if(snake.getX() > 624 || snake.getY() > 624 || snake.getX() < 0 || snake.getY() <0){
     		gameOver=true;
@@ -234,40 +222,101 @@ public class GameFrame extends Game {
             //TODO: add restart screen
         }
         
-        for(Block t: tail){
-        	
-        }
-
         if(!gameOver){
-            readInput();
-            moveSnake();
-//            if(tail.size()>0){
-//            	tail.get(0).setX(snake.getX());
-//            	tail.get(0).setY(snake.getY());
-//            }
-//            for(int i=1;i < tail.size();i++){
-//            	tail.get(i).setX(tail.get(i-1).getX());
-//            	tail.get(i).setY(tail.get(i-1).getY());
-//            }
-            if(tail.size()>0){
-            	follow(tail.get(0),snake);
-            }
-            for(int i=1;i < tail.size();i++){
-            	follow(tail.get(i),tail.get(i-1));
-            }
+        	readInput();
             
-            checkCollisionSnake();
-            checkCollisionMaze();
-            checkCollisionPowerup();
-            if(powerUpActive==1){
-            	switch(powerupType){
-                case 1 : follow(food,snake);break;
+        	if(snakespeed.action(l)){
+        		
+        		
+        		if(gotFood>0){
+        			System.out.println("snake:"+snake.getX()+","+snake.getY());
+        			System.out.println("lastFood:"+lastFood.getX()+","+lastFood.getY());
+        			tail.add(new Block(getImage("assets/maze.png"),lastFood.getX(),lastFood.getY()));
+        			gotFood--;
+        		}else{
+//        			if(tail.size()>0){
+//                    	tail.get(0).setLocation(snake.getX(), snake.getY());
+//                    }
+                    for(int i=0;i < tail.size();i++){
+                    	if(i==tail.size()-1){
+                    		tail.get(i).setLocation(snake.getX(),snake.getY());
+                    	}
+                    	else{
+                    		tail.get(i).setLocation(tail.get(i+1).getX(), tail.get(i+1).getY());
+                    	}
+                    	
+                    }
+        		}
+        		moveSnake();
+        		if(Math.abs(snake.getX() - food.getX()) < dimension && Math.abs(snake.getY() - food.getY()) < dimension){
+                    System.out.println("collide");
+                    System.out.println("food:"+food.getX()+","+food.getY());
+                    //tail.add(new Block(getImage("assets/snakeblock.png"),food.getX(),food.getY()));
+                    lastFood=food;
+                    System.out.println("lastFood:"+lastFood.getX()+","+lastFood.getY());
+                    //resetFood();
+                    int newX,newY;
+                    newX = (int)(Math.random()*100)%40;
+                    newY = (int)(Math.random()*100)%40;
+                    food = new Block(getImage("assets/food.png"),newX * dimension,newY * dimension);
+                    gotFood+=1;
+                    
+//                    if(tail.size()==0){
+//                    	switch(snakeDirection){
+//        	                case 1 : tail.add(new Block(getImage("assets/snakeblock.png"),snake.getX(),snake.getY()+16));break;
+//        	                case 2 : tail.add(new Block(getImage("assets/snakeblock.png"),snake.getX()-16,snake.getY()));break;
+//        	                case 3 : tail.add(new Block(getImage("assets/snakeblock.png"),snake.getX(),snake.getY()-16));break;
+//        	                case 4 : tail.add(new Block(getImage("assets/snakeblock.png"),snake.getX()+16,snake.getY()));break;
+//                    	}
+//                    }else{
+//                    	Block lastTail = tail.get(tail.size()-1);
+//                    	tail.add(new Block(getImage("assets/snakeblock.png"),lastTail.getX(),lastTail.getY()));
+//                    }
+                    
                 }
-            	
-            	if(powerupDuration.action(l)){
-                	powerUpActive=0;
+                
+                
+                
+//                if(gotFood){
+//        			tail.add(new Block(getImage("assets/snakeblock.png"),food.getX(),food.getY()));
+//        			gotFood=false;
+//        		}
+//                if(tail.size()>0){
+//                	tail.get(0).setX(snake.getX());
+//                	tail.get(0).setY(snake.getY());
+//                }
+//                for(int i=1;i < tail.size();i++){
+//                	tail.get(i).setX(tail.get(i-1).getX());
+//                	tail.get(i).setY(tail.get(i-1).getY());
+//                }
+//                if(tail.size()>0){
+//                	follow(tail.get(0),snake);
+//                }
+//                for(int i=1;i < tail.size();i++){
+//                	follow(tail.get(i),tail.get(i-1));
+//                }
+//                if(tail.size()>0){
+//                	tail.get(0).setLocation(snake.getX(), snake.getY());
+//                }
+//                for(int i=1;i < tail.size();i++){
+//                	follow(tail.get(i),tail.get(i-1));
+//                	tail.get(i).setLocation(tail.get(i-1).getX(), tail.get(i-1).getY());
+//                }
+                
+                checkCollisionSnake();
+                checkCollisionMaze();
+                checkCollisionPowerup();
+                if(powerUpActive==1){
+                	switch(powerupType){
+                    case 1 : follow(food,snake);break;
+                    }
+                	
+                	if(powerupDuration.action(l)){
+                    	powerUpActive=0;
+                    }
                 }
-            }
+        	}
+            
         }
         else{
         	readInputRestartGame();
@@ -282,7 +331,7 @@ public class GameFrame extends Game {
 				powerUpActive=1;
 				powerup=null;
 				powerupDuration = new Timer(5000);
-				
+			System.out.println("collide with powerup");
 			}
     	}
 		
@@ -291,6 +340,7 @@ public class GameFrame extends Game {
     	for(int i = 1; i< tail.size(); i++){
     		if(Math.abs(snake.getX() - tail.get(i).getX())<dimension && Math.abs(snake.getY() - tail.get(i).getY())<dimension){
     			gameOver = true;
+    			System.out.println("collide with snake tail#"+i);
     		}
     	}
 		
@@ -300,6 +350,7 @@ public class GameFrame extends Game {
     	for(int i = 0; i< currentMaze.size(); i++){
     		if(Math.abs(snake.getX() - currentMaze.get(i).getX())<dimension && Math.abs(snake.getY() - currentMaze.get(i).getY())<dimension){
     			gameOver = true;
+    			System.out.println("collide with maze");
     		}
     	}
 		
@@ -307,7 +358,7 @@ public class GameFrame extends Game {
 
 	@Override
     public void render(Graphics2D gd) {
-		System.out.println(mainScreen);
+		//System.out.println(mainScreen);
 		if(mainScreen){
 			gd.setColor(Color.white);
 	        gd.fillRect(0, 0, getWidth(), getHeight());
