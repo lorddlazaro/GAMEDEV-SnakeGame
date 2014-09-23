@@ -43,8 +43,9 @@ public class GameFrame extends Game {
     int gotFood=0;
     Block lastFood;
     Timer timeRemaining;
+    Timer timeMusic;
     int score;
-    
+    boolean startGame = false;
     final double dimension = 16; //16 x 16
     @Override
     public void initResources() {
@@ -174,6 +175,7 @@ public class GameFrame extends Game {
             mainScreen=false;
     	}else if(mainScreen==false && keyPressed(KeyEvent.VK_ENTER )){
             levelChosen=true;
+            startGame = true;
     	}
     	if(keyPressed(KeyEvent.VK_UP)&&speed<3){
     		speed++;
@@ -205,6 +207,9 @@ public class GameFrame extends Game {
     	if(timeRemaining.action(l)){
     		gameOver=true;
     	}
+    	if(timeMusic.action(l)){
+    		startGame = true;
+    	}
     	switch(level){
     		case 1 : currentMaze = maze1;break;
     		case 2 : currentMaze = maze2;break;
@@ -232,6 +237,11 @@ public class GameFrame extends Game {
         }
         
         if(!gameOver){
+        	if(startGame){
+        		playSound("assets/background.wav");
+        		timeMusic = new Timer(10000);
+        		startGame = false;
+        	}
         	readInput();
         	if(snakespeed.action(l)){
         		if(gotFood>0){
