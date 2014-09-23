@@ -57,6 +57,7 @@ public class GameFrame extends Game {
     Boolean newLevel = false;
     Timer timeRemaining;
     int score;
+    int scoreMultiplier=1;
     boolean startGame = false;
     boolean savedScore = false;
     final double dimension = 16; //16 x 16
@@ -107,7 +108,7 @@ public class GameFrame extends Game {
         }
         
         
-        snakespeed = new Timer(50);
+        snakespeed = new Timer(100);
         powerupTimer = new Timer(10000);
         timeRemaining = new Timer(60000);
     }
@@ -144,6 +145,23 @@ public class GameFrame extends Game {
 			savedScore = false;
 			saveScores();
         }
+    	
+
+//        if(keyPressed(KeyEvent.VK_RIGHT)){
+//        	switch(snakeDirection){
+//        		case 1 : snakeDirection = 2;break;
+//        		case 2 : snakeDirection = 3;break;
+//        		case 3 : snakeDirection = 4;break;
+//        		case 4 : snakeDirection = 1;break;
+//        	}
+//        }else if(keyPressed(KeyEvent.VK_LEFT)){
+//        	switch(snakeDirection){
+//	    		case 1 : snakeDirection = 4;break;
+//	    		case 2 : snakeDirection = 1;break;
+//	    		case 3 : snakeDirection = 2;break;
+//	    		case 4 : snakeDirection = 3;break;
+//        	}
+//        }
     }
     
     public void resetFood(){
@@ -286,7 +304,6 @@ public class GameFrame extends Game {
     	if(timeRemaining.action(l)){
     		gameOver=true;
     	}
-    	
     	switch(level){
     		case 1 : currentMaze = maze1;break;
     		case 2 : currentMaze = maze2;break;
@@ -298,10 +315,15 @@ public class GameFrame extends Game {
     		int newX,newY;
             newX = (int)(Math.random()*100)%40;
             newY = (int)(Math.random()*100)%40;
-            if(powerupType == 1){
-            	powerup = new Block(getImage("assets/magnet.png"),(double)newX * dimension,(double)newY * dimension);
+            switch(powerupType){
+            	case 1 : powerup = new Block(getImage("assets/magnet.png"),(double)newX * dimension,(double)newY * dimension);
+            			break;
+            	case 2 : powerup = new Block(getImage("assets/magnet.png"),(double)newX * dimension,(double)newY * dimension);
+    			break;
+            	case 3 : powerup = new Block(getImage("assets/magnet.png"),(double)newX * dimension,(double)newY * dimension);
+    			break;
             }
-    		powerupType = (int)(1+((Math.random()*100)%1));
+    		powerupType = (int)(1+((Math.random()*100)%2));
     		
     	}
     	//if collide food
@@ -318,9 +340,23 @@ public class GameFrame extends Game {
         		playSound("assets/background.wav");
         		startGame = false;
         	}
+        	if(powerUpActive==1){
+            	switch(powerupType){
+                case 1 : follow(food,snake);break;
+                case 2 : scoreMultiplier=2;break;
+                //case 3 : snakespeed.setDelay(100);break;
+                }
+            	
+            	if(powerupDuration.action(l)){
+                	powerUpActive=0;
+                	scoreMultiplier=1;
+                	snakespeed.setDelay(50);
+                }
+            }
         	readInput();
         	if(snakespeed.action(l)){
         		if(gotFood>0){
+
         			System.out.println("snake:"+snake.getX()+","+snake.getY());
         			System.out.println("lastFood:"+lastFood.getX()+","+lastFood.getY());
         			tail.add(new Block(getImage("assets/snaketail.png"),lastFood.getX(),lastFood.getY()));
@@ -338,8 +374,8 @@ public class GameFrame extends Game {
         		}
         		moveSnake();
         		if(Math.abs(snake.getX() - food.getX()) < dimension && Math.abs(snake.getY() - food.getY()) < dimension){
-                    System.out.println("collide");
-                    System.out.println("food:"+food.getX()+","+food.getY());
+                    //System.out.println("collide");
+                    //System.out.println("food:"+food.getX()+","+food.getY());
                     lastFood=food;
                     System.out.println("lastFood:"+lastFood.getX()+","+lastFood.getY());
 
@@ -361,21 +397,13 @@ public class GameFrame extends Game {
                     } while(sameCoordinates == true);
                     food = new Block(getImage("assets/food.png"),newX * dimension,newY * dimension);
                     gotFood+=1;
-                    score+=1;
+                    score+=1*scoreMultiplier;
                 }
                 
                 checkCollisionSnake();
                 checkCollisionMaze();
                 checkCollisionPowerup();
-                if(powerUpActive==1){
-                	switch(powerupType){
-                    case 1 : follow(food,snake);break;
-                    }
-                	
-                	if(powerupDuration.action(l)){
-                    	powerUpActive=0;
-                    }
-                }
+                
         	}
             
         }
@@ -393,6 +421,7 @@ public class GameFrame extends Game {
 				powerup=null;
 				powerupDuration = new Timer(3000);
 			System.out.println("collide with powerup");
+			System.out.println("powerupType:"+powerupType);
 			}
     	}
 		
