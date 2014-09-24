@@ -258,15 +258,16 @@ public class GameFrame extends Game {
     		int newX,newY;
             newX = (int)(Math.random()*100)%40;
             newY = (int)(Math.random()*100)%40;
-            switch(powerupType){
-            	case 1 : powerup = new Block(getImage("assets/magnet.png"),(double)newX * dimension,(double)newY * dimension);
-            			break;
-            	case 2 : powerup = new Block(getImage("assets/magnet.png"),(double)newX * dimension,(double)newY * dimension);
-    			break;
-            	case 3 : powerup = new Block(getImage("assets/magnet.png"),(double)newX * dimension,(double)newY * dimension);
-    			break;
-            }
+            
     		powerupType = (int)(1+((Math.random()*100)%2));
+    		switch(powerupType){
+	        	case 1 : powerup = new Block(getImage("assets/magnet.png"),(double)newX * dimension,(double)newY * dimension);
+	        			break;
+	        	case 2 : powerup = new Block(getImage("assets/2x.png"),(double)newX * dimension,(double)newY * dimension);
+				break;
+	        	case 3 : powerup = new Block(getImage("assets/magnet.png"),(double)newX * dimension,(double)newY * dimension);
+				break;
+    		}
     		
     	}
     	//if collide food
