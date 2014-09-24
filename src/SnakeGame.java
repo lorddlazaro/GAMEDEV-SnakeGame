@@ -23,7 +23,9 @@ public class SnakeGame {
         // TODO code application logic here
         GameFrame gf = new GameFrame();
         GameLoader game = new GameLoader();
-
+        
+        gf.readHighscore();
+		
         game.setup(gf,new Dimension(640,640), false);
         game.start();
         
