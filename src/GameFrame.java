@@ -195,55 +195,55 @@ public class GameFrame extends Game {
     private void readFileText() {
     	Scorer scorer = new Scorer();
         String fileName="src/score.txt";
-        try{
-	        FileReader inputFile = new FileReader(fileName);
-	        BufferedReader bufferReader = new BufferedReader(inputFile);
-	
-	        String line;
-	        String temp = "";
-	        while ((line = bufferReader.readLine()) != null){
-	        	temp = "";
-	        	scorer = new Scorer();
-	        	for(int i = 0; i<line.length(); i++){
-	        		if (i==line.length()-1){
-	        			temp+=line.charAt(line.length()-1);
-	        			scorer.setScore(Integer.parseInt(temp));
-	        		} else if(line.charAt(i) != ' '){
-	        			temp+=line.charAt(i);
-	        		} else if(line.charAt(i) == ' '){
-	        			scorer.setName(temp);
-	        			temp = "";
-	        		} 
-	        	}
-        		scorerList.add(scorer);
-
-	        }
-	        
-	        bufferReader.close();
-        }catch(Exception e){
-               e.printStackTrace();                   
-        }	
+//        try{
+//	        FileReader inputFile = new FileReader(fileName);
+//	        BufferedReader bufferReader = new BufferedReader(inputFile);
+//	
+//	        String line;
+//	        String temp = "";
+//	        while ((line = bufferReader.readLine()) != null){
+//	        	temp = "";
+//	        	scorer = new Scorer();
+//	        	for(int i = 0; i<line.length(); i++){
+//	        		if (i==line.length()-1){
+//	        			temp+=line.charAt(line.length()-1);
+//	        			scorer.setScore(Integer.parseInt(temp));
+//	        		} else if(line.charAt(i) != ' '){
+//	        			temp+=line.charAt(i);
+//	        		} else if(line.charAt(i) == ' '){
+//	        			scorer.setName(temp);
+//	        			temp = "";
+//	        		} 
+//	        	}
+//        		scorerList.add(scorer);
+//
+//	        }
+//	        
+//	        bufferReader.close();
+//        }catch(Exception e){
+//               e.printStackTrace();                   
+//        }	
 	}
     
     // Appends the result. It should overwrite the existing file.
     private void saveScores(){
     	readHighscore();
     	scorerList.add(new Scorer("HEY", 50));
-    	try {
-    		if(savedScore == false){
-    			FileWriter writer = new FileWriter(new File("src/score.txt"), false);
-                for(int i = 0; i<scorerList.size(); i++){
-                	System.out.println("INSIDE LOOP: "+scorerList.get(i).getName() + " " + scorerList.get(i).getScore());
-                    
-                	writer.write(scorerList.get(i).getName() + " " + scorerList.get(i).getScore());
-                	writer.write('\n');
-                }
-    	    	savedScore = true;
-        		writer.close();
-    		}
-        } catch (Exception e) {
-        	System.out.println("There was a problem:" + e);
-    	}
+//    	try {
+//    		if(savedScore == false){
+//    			FileWriter writer = new FileWriter(new File("src/score.txt"), false);
+//                for(int i = 0; i<scorerList.size(); i++){
+//                	System.out.println("INSIDE LOOP: "+scorerList.get(i).getName() + " " + scorerList.get(i).getScore());
+//                    
+//                	writer.write(scorerList.get(i).getName() + " " + scorerList.get(i).getScore());
+//                	writer.write('\n');
+//                }
+//    	    	savedScore = true;
+//        		writer.close();
+//    		}
+//        } catch (Exception e) {
+//        	System.out.println("There was a problem:" + e);
+//    	}
     }
 
 	public double getDistance(Block x, Block y){
@@ -498,9 +498,9 @@ public class GameFrame extends Game {
 	        fontManager.getFont("FPS Font").drawString(gd, "SCORE:"+score, 5, 30);
 	        fontManager.getFont("FPS Font").drawString(gd, "LEVEL: "+level, 250, 10);
 	        
-	        if(time == 0 && level<=5){
+	        if(newLevel == false &&time == 0 && level<=5){
 	        	level++;
-	        	resetVariables();
+	        	newLevel = true;
 	        } 
 	        
 	        if(newLevel){
@@ -515,17 +515,6 @@ public class GameFrame extends Game {
         
     }
 	
-	private void resetVariables() {
-		newLevel = true;
-		timeRemaining.refresh();
-		snakeX = 10;
-        snakeY= 10;
-		moveSnake();
-		tail.removeAll(tail);
-		powerupTimer = new Timer(10000);
-		score=0;
-	}
-
 	private void showNewLevel(Graphics2D gd) {
 		gd.setColor(Color.white);
         gd.fillRect(0, 0, getWidth(), getHeight());
